@@ -1,0 +1,1 @@
+**Lambda source code will be compressed in this directory to upload as zip**

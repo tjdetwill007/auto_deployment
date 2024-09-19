@@ -1,0 +1,16 @@
+ARG VERSION="lts"
+FROM public.ecr.aws/docker/library/node:${VERSION}-alpine
+ARG INSTALL_COMMAND="npm install"
+ARG BUILD_COMMAND=""
+ARG PORT=3000
+WORKDIR /app
+COPY . /app
+RUN ${INSTALL_COMMAND}
+RUN if [ -n "${BUILD_COMMAND}" ]; then \
+echo "Running build command: ${BUILD_COMMAND}" && \
+${BUILD_COMMAND}; \
+else \
+echo "No build command provided, skipping build"; \
+fi
+EXPOSE ${PORT}
+CMD [ "npm","start" ]

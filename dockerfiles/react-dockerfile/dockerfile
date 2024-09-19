@@ -1,0 +1,23 @@
+FROM public.ecr.aws/docker/library/node:lts-alpine AS build
+ARG INSTALL_COMMAND="npm install"
+ARG BUILD_COMMAND="npm run build"
+WORKDIR /app
+COPY . /app
+RUN ${INSTALL_COMMAND}
+RUN ${BUILD_COMMAND}
+
+# Nginx setup
+FROM public.ecr.aws/docker/library/nginx:alpine
+ARG OUTPUT_DIR=dist
+ARG PORT=80
+
+COPY --from=build /app/default.conf /etc/nginx/conf.d/default.conf
+
+WORKDIR /usr/share/nginx/html
+RUN rm -rf ./*
+
+# Copy static assets from builder stage
+COPY --from=build /app/${OUTPUT_DIR} .
+EXPOSE ${PORT}
+# Containers run nginx with global directives and daemon off
+ENTRYPOINT ["nginx", "-g", "daemon off;"]

@@ -1,0 +1,15 @@
+FROM public.ecr.aws/docker/library/node:lts-alpine
+
+ARG INSTALL_COMMAND="npm install"
+
+ARG PORT=3000
+
+WORKDIR /app
+
+COPY . /app
+
+RUN ${INSTALL_COMMAND}
+
+EXPOSE ${PORT}
+
+CMD [ "node","index.js" ]
